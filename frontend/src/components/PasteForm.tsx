@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './PasteForm.css';
 import { createPaste } from '../api/config';
 import type { PasteResponse } from '../api/types';

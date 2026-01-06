@@ -1,0 +1,13 @@
+/**
+ * PastePage Styles
+ */
+
+.paste-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.paste-page .paste-viewer-container {
+    flex: 1;
+}
