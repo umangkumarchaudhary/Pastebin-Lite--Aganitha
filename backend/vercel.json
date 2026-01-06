@@ -1,0 +1,30 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "version": 2,
+    "name": "pastebin-api",
+    "builds": [
+        {
+            "src": "dist/server.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "dist/server.js"
+        }
+    ],
+    "crons": [
+        {
+            "path": "/api/cleanup",
+            "schedule": "0 * * * *"
+        },
+        {
+            "path": "/api/cleanup/purge?retentionDays=7",
+            "schedule": "0 0 * * *"
+        }
+    ],
+    "env": {
+        "NODE_ENV": "production"
+    }
+}

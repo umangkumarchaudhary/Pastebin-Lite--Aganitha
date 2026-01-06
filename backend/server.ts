@@ -7,9 +7,14 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import pasteRoutes from './routes/pastes';
+import cleanupRoutes from './routes/cleanup';
 import { prisma } from './lib/prisma';
+import {
+    globalRateLimiter,
+    createPasteLimiter,
+    getPasteLimiter
+} from './lib/ratelimit';
 
 // ============================================
 // App Configuration
@@ -17,6 +22,12 @@ import { prisma } from './lib/prisma';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// ============================================
+// Trust Proxy (for rate limiting behind reverse proxy)
+// ============================================
+
+app.set('trust proxy', 1);
 
 // ============================================
 // Security Middleware
@@ -34,40 +45,10 @@ app.use(cors({
 }));
 
 // ============================================
-// Rate Limiting
+// Rate Limiting (Global)
 // ============================================
 
-// Global rate limit
-const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // 1000 requests per 15 minutes
-    message: {
-        success: false,
-        error: {
-            code: 'RATE_LIMIT_EXCEEDED',
-            message: 'Too many requests, please try again later',
-        },
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Stricter rate limit for paste creation
-const createPasteLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute
-    max: 10, // 10 pastes per minute
-    message: {
-        success: false,
-        error: {
-            code: 'RATE_LIMIT_EXCEEDED',
-            message: 'Too many pastes created. Please wait a moment.',
-        },
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-app.use(globalLimiter);
+app.use(globalRateLimiter);
 
 // ============================================
 // Body Parser
@@ -96,6 +77,7 @@ app.get('/health', (req: Request, res: Response) => {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime(),
+        version: '1.0.0',
     });
 });
 
@@ -120,16 +102,22 @@ app.get('/health/db', async (req: Request, res: Response) => {
 // API Routes
 // ============================================
 
-// Apply stricter rate limit to paste creation
+// Apply route-specific rate limiters
 app.use('/api/pastes', (req: Request, res: Response, next: NextFunction) => {
     if (req.method === 'POST') {
         return createPasteLimiter(req, res, next);
+    }
+    if (req.method === 'GET') {
+        return getPasteLimiter(req, res, next);
     }
     next();
 });
 
 // Mount paste routes
 app.use('/api/pastes', pasteRoutes);
+
+// Mount cleanup routes (for cron jobs)
+app.use('/api/cleanup', cleanupRoutes);
 
 // ============================================
 // Root Endpoint
@@ -146,8 +134,10 @@ app.get('/', (req: Request, res: Response) => {
             createPaste: 'POST /api/pastes',
             getPaste: 'GET /api/pastes/:id',
             getRawPaste: 'GET /api/pastes/:id/raw',
+            cleanup: 'GET /api/cleanup (requires auth)',
+            cleanupStats: 'GET /api/cleanup/stats (requires auth)',
         },
-        documentation: 'https://github.com/your-repo/pastebin-api',
+        documentation: 'https://github.com/umangkumarchaudhary/Pastebin-Lite--Aganitha',
     });
 });
 
@@ -211,17 +201,24 @@ app.listen(PORT, () => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
-║   🚀 Pastebin API Server                                      ║
+║   🚀 Pastebin API Server v1.0.0                               ║
 ║                                                               ║
 ║   Server running on: http://localhost:${PORT}                    ║
-║   Environment: ${process.env.NODE_ENV || 'development'}                               ║
+║   Environment: ${(process.env.NODE_ENV || 'development').padEnd(15)}                   ║
 ║                                                               ║
 ║   Endpoints:                                                  ║
-║   • POST /api/pastes       - Create a new paste               ║
-║   • GET  /api/pastes/:id   - Retrieve a paste                 ║
+║   • POST /api/pastes         - Create a new paste             ║
+║   • GET  /api/pastes/:id     - Retrieve a paste               ║
 ║   • GET  /api/pastes/:id/raw - Get raw paste content          ║
-║   • GET  /health           - Health check                     ║
-║   • GET  /health/db        - Database health check            ║
+║   • GET  /api/cleanup        - Cleanup cron endpoint          ║
+║   • GET  /api/cleanup/stats  - Get paste statistics           ║
+║   • GET  /health             - Health check                   ║
+║   • GET  /health/db          - Database health check          ║
+║                                                               ║
+║   Rate Limits:                                                ║
+║   • Global: 1000 req/15min                                    ║
+║   • Create: 10 pastes/min                                     ║
+║   • Read:   100 req/min                                       ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
   `);
