@@ -180,22 +180,20 @@ export function PasteForm({ onSuccess }: PasteFormProps) {
                         )}
                         {successData.maxViews && (
                             <span className="badge">
-                                👁 Max views: {successData.maxViews}
+                                Max views: {successData.maxViews}
                             </span>
                         )}
                     </div>
 
                     <div className="success-actions">
                         <a
-                            href={successData.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href={`/paste/${successData.id}`}
                             className="btn btn-secondary"
                         >
-                            View Paste →
+                            VIEW PASTE
                         </a>
                         <button onClick={handleNewPaste} className="btn">
-                            Create Another
+                            CREATE ANOTHER
                         </button>
                     </div>
                 </div>
