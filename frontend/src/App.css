@@ -1,0 +1,74 @@
+/**
+ * App Component Styles - Mercedes Theme
+ */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding-bottom: var(--space-3xl);
+}
+
+/* Features Section */
+.features-section {
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-3xl);
+  border-top: 1px solid var(--border);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+.feature-card {
+  padding: var(--space-xl);
+  text-align: center;
+  border: 1px solid var(--border);
+  border-left: none;
+  transition: background var(--transition-base);
+}
+
+.feature-card:first-child {
+  border-left: 1px solid var(--border);
+}
+
+.feature-card:hover {
+  background: var(--surface-hover);
+}
+
+.feature-card h3 {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.feature-card p {
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    border-left: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .feature-card:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+}
