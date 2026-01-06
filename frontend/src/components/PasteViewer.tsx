@@ -62,6 +62,50 @@ export function PasteViewer() {
         }
     };
 
+    // Get file extension from language
+    const getExtension = (lang: string): string => {
+        const extMap: Record<string, string> = {
+            javascript: 'js',
+            typescript: 'ts',
+            python: 'py',
+            java: 'java',
+            cpp: 'cpp',
+            c: 'c',
+            csharp: 'cs',
+            go: 'go',
+            rust: 'rs',
+            ruby: 'rb',
+            php: 'php',
+            html: 'html',
+            css: 'css',
+            json: 'json',
+            sql: 'sql',
+            bash: 'sh',
+            markdown: 'md',
+            text: 'txt',
+        };
+        return extMap[lang] || 'txt';
+    };
+
+    // Download code as file
+    const downloadCode = () => {
+        if (!paste) return;
+
+        const lang = paste.language || 'text';
+        const ext = getExtension(lang);
+        const filename = `${paste.id}.${ext}`;
+
+        const blob = new Blob([paste.content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleString();
     };
@@ -132,6 +176,9 @@ export function PasteViewer() {
                         <span className="paste-id">{paste.id}</span>
                     </div>
                     <div className="paste-header-right">
+                        <button onClick={downloadCode} className="btn btn-secondary btn-sm">
+                            DOWNLOAD
+                        </button>
                         <button onClick={copyUrl} className="btn btn-secondary btn-sm">
                             COPY URL
                         </button>

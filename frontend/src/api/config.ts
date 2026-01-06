@@ -16,6 +16,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:30
  */
 export const API_ENDPOINTS = {
     pastes: `${API_BASE_URL}/api/pastes`,
+    files: `${API_BASE_URL}/api/files`,
     health: `${API_BASE_URL}/health`,
 } as const;
 
@@ -82,3 +83,64 @@ export async function getRawPaste(id: string): Promise<string | null> {
         return null;
     }
 }
+
+// ============================================
+// File Upload API
+// ============================================
+
+export interface UploadedFile {
+    path: string;
+    name: string;
+    content: string; // Base64 encoded
+    size: number;
+    type: string;
+}
+
+export interface CreateUploadParams {
+    name: string;
+    files: UploadedFile[];
+    expiresIn?: number;
+    maxViews?: number;
+}
+
+export interface UploadResponse {
+    id: string;
+    url: string;
+    name: string;
+    fileCount: number;
+    totalSize: number;
+    expiresAt: string | null;
+    maxViews: number | null;
+    createdAt: string;
+}
+
+export interface GetUploadResponse {
+    id: string;
+    name: string;
+    files: UploadedFile[];
+    fileCount: number;
+    totalSize: number;
+    viewCount: number;
+    maxViews: number | null;
+    remainingViews: number | null;
+    expiresAt: string | null;
+    createdAt: string;
+}
+
+/**
+ * Create a new file upload
+ */
+export async function createUpload(params: CreateUploadParams): Promise<ApiResponse<UploadResponse>> {
+    return apiRequest<UploadResponse>(API_ENDPOINTS.files, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+}
+
+/**
+ * Get a file upload by ID
+ */
+export async function getUpload(id: string): Promise<ApiResponse<GetUploadResponse>> {
+    return apiRequest<GetUploadResponse>(`${API_ENDPOINTS.files}/${id}`);
+}
+

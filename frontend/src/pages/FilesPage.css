@@ -1,0 +1,9 @@
+.files-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.files-page .file-viewer-container {
+    flex: 1;
+}

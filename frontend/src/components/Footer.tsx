@@ -17,10 +17,7 @@ export function Footer() {
                         >
                             GitHub
                         </a>
-                        <span className="footer-divider">/</span>
-                        <span className="footer-credit">
-                            Built for Aganitha
-                        </span>
+
                     </div>
                 </div>
             </div>

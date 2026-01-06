@@ -1,0 +1,172 @@
+/**
+ * FileUploadForm Styles - Mercedes Theme
+ */
+
+.file-upload-form {
+    padding: var(--space-xl);
+    border: 1px solid var(--border);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.form-header h2 {
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    margin-bottom: var(--space-sm);
+}
+
+/* Drop Zone */
+.drop-zone {
+    border: 2px dashed var(--border);
+    padding: var(--space-2xl);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-lg);
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.drop-zone.has-files {
+    padding: var(--space-md);
+}
+
+.drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.drop-icon {
+    font-size: var(--text-4xl);
+    color: var(--text-muted);
+}
+
+.drop-hint {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+/* File List */
+.file-list {
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-name {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.file-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: var(--text-lg);
+    cursor: pointer;
+    padding: 0 var(--space-xs);
+}
+
+.file-remove:hover {
+    color: var(--error);
+}
+
+.add-more {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    padding: var(--space-md) 0;
+}
+
+/* Upload Info */
+.upload-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--space-lg);
+}
+
+/* Success State */
+.upload-success {
+    text-align: center;
+    padding: var(--space-xl) 0;
+}
+
+.success-icon {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--success);
+    color: var(--success);
+    font-size: var(--text-2xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+}
+
+.upload-success h2 {
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    margin-bottom: var(--space-sm);
+}
+
+.upload-stats {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin: var(--space-lg) 0;
+}
+
+.success-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-xl);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    margin-top: var(--space-lg);
+}
+
+/* Error */
+.error-message {
+    color: var(--error);
+    font-size: var(--text-sm);
+    text-align: center;
+    padding: var(--space-md);
+    border: 1px solid var(--error);
+    margin-bottom: var(--space-lg);
+}
